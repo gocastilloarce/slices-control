@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <title>Hello from Electron renderer!</title>
+</head>
+
+<body>
+    <h1>Contador</h1>
+    <p id="g"></p>
+    <img src="" alt="">
+    <button type="button" id="buttonUp">Up</button>
+    <button type="button" id="buttonDown">Down</button>
+    <script src="controlador.js">
+    </script>
+    <script src="../../../node_modules/qrcode/build/qrcode.js">
+    </script>
+</body>
+
+</html>
