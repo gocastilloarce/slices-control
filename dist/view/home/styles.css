@@ -1,17 +1,113 @@
+:root {
+    --radius: 27px
+}
+
 body {
+    display: grid;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    padding: 0;
+    margin: 0;
+    grid-template-areas: "menu"
+        "qrcode";
+    grid-template-rows: 70px auto;
+}
+
+header {
+    margin: 0;
+    height: 100%;
+}
+
+.menu-container {
+    background-color: #40E0D0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    grid-area: menu;
     display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
+    justify-content: space-between;
+    align-content: center;
     align-items: center;
 }
 
-.qrcode {
-    display: block;
-    width: 80vmin;
-    max-width: 250px;
+.title {
+    margin-left: 10px;
 }
 
-.button {
-    display: block;
-    background-color: red;
+.main {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    grid-area: qrcode;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+    flex-direction: column;
+    overflow: auto;
+    text-align: center;
+}
+
+.client-connection {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    grid-area: qrcode;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+    flex-direction: column;
+    overflow: auto;
+}
+
+.qrcode {
+    text-align: center;
+}
+
+.qr-container {
+    position: relative;
+    width: 80vmin;
+    max-width: 300px;
+}
+
+.on-of-container {
+    width: 100px;
+    height: 50px;
+    background-image: linear-gradient(to right, blue, red);
+    border-radius: 25px;
+    display: flex;
+    margin-right: 10px;
+}
+
+.on-of-indicator {
+    background-color: #df0020;
+    border-radius: var(--radius);
+    height: calc(var(--radius)*2);
+    width: calc(var(--radius)*2);
+    text-align: center;
+    line-height: calc(var(--radius)*2);
+    user-select: none;
+    align-self: center;
+    overflow: visible;
+}
+
+.on-of-indicator-on {
+    background-color: #2300dd;
+    color: white;
+    transform: translate(100%);
+    transition: transform .3s, background-color 0.3s, color 0.3s;
+}
+
+.on-of-indicator-off {
+    background-color: #df0020;
+    transform: translate(0%);
+    transition: transform .3s;
+    transition: transform .3s, background-color 0.3s, color 0.3s;
+}
+
+.hidden {
+    display: none;
 }

@@ -11,10 +11,24 @@
 </head>
 
 <body>
-    <input id="input"/>
-    <div id="imagen" class="qrcode"></div>
-    <button type="button" id="buttonUp" class="button button-up">Up</button>
-    <button type="button" id="buttonDown" class="button button-down">Down</button>
+    <header>
+        <div class="menu-container">
+            <h1 class="title">Slices Control</h1>
+            <div class="on-of-container">
+                <span class="on-of-indicator" id="on-of-indicator">OFF</span>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <h1 id="server-is-off">Por favor encienda el servidor</h1>
+        <div class="client-connection hidden" id="client-connection">
+            <div id="qrcode" class="qrcode" >
+                <div id="qr-container" class="qr-container"></div>
+                <p id="lea-qr">Lea el codigo QR con la App</p>
+            </div>
+            <h1 id="qr-connected" class="hidden">CONECTADO</h1>
+        </div>
+    </main>
     <script src="../../../node_modules/qrcode/build/qrcode.js"></script>
     <script src="controlador.js"></script>
 </body>

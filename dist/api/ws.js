@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.stopWS = exports.startWS = void 0;
+exports.cerrando = exports.escuchando = exports.desconectado = exports.conectado = exports.stopWS = exports.startWS = void 0;
 const express = require("express");
 const app = express();
 const http = require("http");
@@ -8,28 +8,36 @@ const WebSocket = require("ws");
 const server = http.createServer(app);
 const controller_1 = require("../controller");
 const types_1 = require("../types");
-class message {
-}
+let connectionToken = "";
 const wss = new WebSocket.Server({ server });
+const conectado = (cb) => wss.on("connection", cb);
+exports.conectado = conectado;
+let desconect = () => { console.log("dess"); };
+let desconectado = (cb) => {
+    desconect = cb;
+};
+exports.desconectado = desconectado;
+const escuchando = (cb) => wss.addListener("listening", cb);
+exports.escuchando = escuchando;
+const cerrando = (cb) => server.addListener("close", cb);
+exports.cerrando = cerrando;
 wss.on("connection", (ws, req) => {
+    ws.on("close", desconect);
     if (wss.clients.size > 1)
         return ws.close();
     const arr = new URL("http://example" + req.url).searchParams.getAll("token");
     if (arr.length < 1)
         return ws.close();
     const token = arr[0];
-    if (token != "holatoken")
+    if (token !== connectionToken)
         return ws.close();
     ws.on("message", (message) => {
         try {
             const { event, body } = JSON.parse(message.toString());
-            if (!body.token)
-                return ws.close();
-            if (body.token !== "holatoken")
-                return ws.close();
             switch (event) {
                 case types_1.ApiActions.KEYACTION: {
-                    switch (body.keypress) {
+                    const { keypress } = body;
+                    switch (keypress) {
                         case types_1.KeyActions.LEFT: {
                             (0, controller_1.strokeLeft)();
                             break;
@@ -41,21 +49,34 @@ wss.on("connection", (ws, req) => {
                     }
                     break;
                 }
+                case types_1.ApiActions.PRESENTATIONACTION: {
+                    const { action } = body;
+                    switch (action) {
+                        case types_1.PresentationActions.START: {
+                            (0, controller_1.startPresentation)();
+                            break;
+                        }
+                        case types_1.PresentationActions.STOP: {
+                            (0, controller_1.stopPresentation)();
+                            break;
+                        }
+                    }
+                    break;
+                }
                 default: {
                     console.log("default");
                 }
             }
         }
         catch (err) {
+            console.log("error", err);
             ws.close();
         }
     });
-    ws.on("close", (ws) => {
-        console.log("desconectado");
-    });
 });
-const startWS = () => {
+const startWS = (token) => {
     if (!server.listening) {
+        connectionToken = token;
         server.listen(3000, () => {
             console.log("Server running on port", 3000);
         });

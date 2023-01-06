@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ApiActions = exports.KeyActions = void 0;
+exports.PresentationActions = exports.ApiActions = exports.KeyActions = void 0;
 var KeyActions;
 (function (KeyActions) {
     KeyActions["RIGHT"] = "right";
@@ -10,4 +10,10 @@ var ApiActions;
 (function (ApiActions) {
     ApiActions["LOGIN"] = "login";
     ApiActions["KEYACTION"] = "key";
+    ApiActions["PRESENTATIONACTION"] = "presentation";
 })(ApiActions = exports.ApiActions || (exports.ApiActions = {}));
+var PresentationActions;
+(function (PresentationActions) {
+    PresentationActions["START"] = "start";
+    PresentationActions["STOP"] = "stop";
+})(PresentationActions = exports.PresentationActions || (exports.PresentationActions = {}));

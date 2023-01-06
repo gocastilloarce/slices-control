@@ -1,9 +1,17 @@
-import robot = require('robotjs')
+import {keyTap, keyToggle} from 'robotjs'
 
 export const strokeRight = ()=>{
-    robot.keyTap("right")
+    keyTap("right")
 }
 
 export const strokeLeft = ()=>{
-    robot.keyTap("left")
+    keyTap("left")
+}
+
+export const startPresentation = ()=>{
+    keyTap("f5","control")
+}
+
+export const stopPresentation = ()=>{
+    keyTap("escape")
 }

@@ -3,70 +3,86 @@ const app = express();
 import http = require("http");
 import WebSocket = require("ws");
 const server = http.createServer(app);
-import { strokeRight, strokeLeft } from '../controller';
-import { KeyActions, ApiActions } from "../types";
-class message {
-    event: ApiActions
-    body: {
-        token: string,
-        keypress: KeyActions
-    }
-}
+import { strokeRight, strokeLeft, startPresentation, stopPresentation } from '../controller';
+import { KeyActions, ApiActions, message, PresentationActions } from "../types";
+
+let connectionToken = "";
 const wss = new WebSocket.Server({ server })
 
+const conectado = (cb) => wss.on("connection", cb);
+let desconect = () => {console.log("dess") }
+let desconectado = (cb: () => void) => {
+  desconect = cb
+};
+const escuchando = (cb) => wss.addListener("listening", cb)
+const cerrando = (cb) => server.addListener("close", cb)
+
 wss.on("connection", (ws, req) => {
-    if (wss.clients.size > 1) return ws.close()
-    const arr = new URL("http://example"+req.url).searchParams.getAll("token")
-    if(arr.length<1)return ws.close();
-    const token = arr[0];
-    if(token != "holatoken") return ws.close();
-    ws.on("message", (message) => {
-        try {
-            const { event, body }: message = JSON.parse(message.toString())
-            if (!body.token) return ws.close();
-            if (body.token !== "holatoken") return ws.close();
-            switch (event) {
-                case ApiActions.KEYACTION: {
-                    switch (body.keypress) {
-                        case KeyActions.LEFT: {
-                            strokeLeft()
-                            break
-                        }
-                        case KeyActions.RIGHT: {
-                            strokeRight()
-                            break
-                        }
-                    }
-                    break
-                }
-                default: {
-                    console.log("default")
-                }
+  ws.on("close", desconect)
+  if (wss.clients.size > 1) return ws.close()
+  const arr = new URL("http://example" + req.url).searchParams.getAll("token")
+  if (arr.length < 1) return ws.close();
+  const token = arr[0];
+  if (token !== connectionToken) return ws.close();
+  ws.on("message", (message) => {
+    try {
+      const { event, body }: message = JSON.parse(message.toString())
+      switch (event) {
+        case ApiActions.KEYACTION: {
+          const { keypress } = body
+          switch (keypress) {
+            case KeyActions.LEFT: {
+              strokeLeft()
+              break
             }
-        } catch (err) {
-            ws.close()
+            case KeyActions.RIGHT: {
+              strokeRight()
+              break
+            }
+          }
+          break
         }
-    })
-    ws.on("close", (ws) => {
-        console.log("desconectado")
-    })
+        case ApiActions.PRESENTATIONACTION: {
+          const { action } = body
+          switch (action) {
+            case PresentationActions.START: {
+              startPresentation()
+              break;
+            }
+            case PresentationActions.STOP: {
+              stopPresentation()
+              break;
+            }
+          }
+          break;
+        }
+        default: {
+          console.log("default")
+        }
+      }
+    } catch (err) {
+      console.log("error", err)
+      ws.close()
+    }
+  })
 })
 
-const startWS = () => {
-    if (!server.listening) {
-        server.listen(3000, () => {
-            console.log("Server running on port", 3000)
-        })
-    }
+const startWS = (token:string) => {
+  if (!server.listening) {
+    connectionToken=token
+    server.listen(3000, () => {
+      console.log("Server running on port", 3000)
+    })
+  }
 };
 
 const stopWS = () => {
-    if (server.listening) {
-        wss.clients.forEach((ws)=>ws.close())
-        server.close(()=>{
-            console.log("Closing Server")
-        })
-    }
+  if (server.listening) {
+    wss.clients.forEach((ws) => ws.close())
+    server.close(() => {
+      console.log("Closing Server")
+    })
+  }
 }
 
-export { startWS, stopWS }
+export { startWS, stopWS, conectado, desconectado, escuchando, cerrando }

@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import { ContextBridgeApi } from './types';
+import { ConnectionInfo, ContextBridgeApi } from './types';
 
 const exposedIpi: ContextBridgeApi=  {
     versions: {
@@ -9,9 +9,13 @@ const exposedIpi: ContextBridgeApi=  {
     },
     webServer: {
         start: ()=>ipcRenderer.send("start-web-server"),
-        stop: ()=>ipcRenderer.send("stop-web-server")
+        stop: ()=>ipcRenderer.send("stop-web-server"),
+        onStart: (callback)=>ipcRenderer.on("ws-server-on", (e)=>callback()),
+        onStop: (callback)=>ipcRenderer.on("ws-server-off", (e)=>callback()),
+        onClientConnect: (cb)=>ipcRenderer.on("ws-client-connected", (e)=>cb()),
+        onClientDisconnect: (cb)=>ipcRenderer.on("ws-client-disconnected", (e)=>cb())
     },
-    getIpAddress: ()=>ipcRenderer.invoke("get-ip-address") as Promise<string>
+    getConnectionInfo: ()=>ipcRenderer.invoke("get-connection-info") as Promise<ConnectionInfo>
 }
 
 contextBridge.exposeInMainWorld("api", exposedIpi)
